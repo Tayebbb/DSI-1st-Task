@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intern Demo · Users</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+
+<!-- ============ ANIMATED BACKGROUND ============ -->
+<div class="bg-scene" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="bg-grain"></div>
+</div>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="glass-nav sticky-top">
+    <div class="container d-flex align-items-center justify-content-between py-2">
+        <a class="brand" href="#">
+            <span class="brand-mark"><i class="bi bi-box-seam-fill"></i></span>
+            <span>Intern Demo</span>
+        </a>
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-glass btn-sm d-none d-md-inline-flex" id="btnRefresh" title="Reload (R)">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+            <button class="btn btn-accent btn-sm" id="btnNew" title="New user (N)">
+                <i class="bi bi-plus-lg me-1"></i>Add User
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ============ MAIN ============ -->
+<main class="container pb-5">
+
+    <!-- Hero -->
+    <header class="hero text-center py-5">
+        <span class="badge-soft mb-3">Spring Boot &middot; Internship Project</span>
+        <h1 class="display-hero mb-3">
+            Manage your users.<br>
+            <span class="grad-text">Beautifully.</span>
+        </h1>
+        <p class="hero-lead text-muted mx-auto">
+            A single-page dashboard powered by Spring Boot, JPA, PostgreSQL and a hand-crafted glass UI.
+        </p>
+    </header>
+
+    <!-- Stats + Search -->
+    <section class="glass-card control-bar p-3 p-md-4 mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <div class="stat">
+                    <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+                    <div>
+                        <div class="stat-value" id="statCount">—</div>
+                        <div class="stat-label">Total users</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="d-flex gap-2 justify-content-md-end">
+                    <div class="search-wrap flex-grow-1" style="max-width: 420px;">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="search" id="search" class="form-control search-input"
+                               placeholder="Search name or email...  ( / )" autocomplete="off">
+                    </div>
+                    <button class="btn btn-accent d-md-none" id="btnNewMobile">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- User grid -->
+    <section id="userGrid" class="row g-3 g-md-4"></section>
+
+    <!-- Skeleton (loading state) -->
+    <section id="skeleton" class="row g-3 g-md-4">
+        <div class="col-md-6 col-xl-4" v-for="s in 6" data-skeleton>
+            <div class="glass-card p-3 h-100">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="skel skel-circle"></div>
+                    <div class="flex-grow-1">
+                        <div class="skel skel-line" style="width:60%"></div>
+                        <div class="skel skel-line mt-2" style="width:80%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Empty state -->
+    <section id="emptyState" class="empty-state glass-card p-5 text-center d-none">
+        <div class="empty-illustration mb-3"><i class="bi bi-people"></i></div>
+        <h4 class="mb-2">No users yet</h4>
+        <p class="text-muted mb-4">Start by adding your first user to the database.</p>
+        <button class="btn btn-accent" id="btnEmptyNew">
+            <i class="bi bi-plus-lg me-1"></i>Add your first user
+        </button>
+    </section>
+
+    <!-- No search results -->
+    <section id="noResults" class="empty-state glass-card p-5 text-center d-none">
+        <div class="empty-illustration mb-3"><i class="bi bi-search"></i></div>
+        <h5 class="mb-2">No matching users</h5>
+        <p class="text-muted mb-0">Try a different search term.</p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-5">
+        <small class="text-subtle">
+            Built with Spring Boot · Thymeleaf · PostgreSQL
+            &nbsp;·&nbsp; <kbd>N</kbd> new · <kbd>/</kbd> search · <kbd>R</kbd> refresh · <kbd>Esc</kbd> close
+        </small>
+    </footer>
+</main>
+
+<!-- ============ USER MODAL (Add / Edit) ============ -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-modal">
+            <div class="modal-body p-4 p-md-5">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h5 class="mb-1" id="userModalTitle">Add User</h5>
+                        <div class="text-muted small" id="userModalSubtitle">
+                            Create a new user record.
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form id="userForm" novalidate>
+                    <input type="hidden" id="fId">
+
+                    <div class="mb-3">
+                        <label for="fName" class="form-label">Name</label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-person input-icon"></i>
+                            <input id="fName" name="name" type="text" class="form-control with-icon"
+                                   placeholder="e.g. Ada Lovelace" autocomplete="name" required maxlength="100">
+                        </div>
+                        <div class="invalid-feedback d-block" id="errName"></div>
+                        <div class="form-hint">Full name as it should appear in the system.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="fEmail" class="form-label">Email</label>
+                        <div class="input-icon-wrap">
+                            <i class="bi bi-envelope input-icon"></i>
+                            <input id="fEmail" name="email" type="email" class="form-control with-icon"
+                                   placeholder="e.g. ada@example.com" autocomplete="email" required maxlength="150">
+                        </div>
+                        <div class="invalid-feedback d-block" id="errEmail"></div>
+                        <div class="form-hint">Must be unique across all users.</div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center gap-2">
+                        <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-accent px-4" id="btnSubmit">
+                            <span class="btn-label">Save</span>
+                            <span class="btn-spinner d-none">
+                                <span class="spinner-border spinner-border-sm" role="status"></span>
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ DELETE MODAL ============ -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content glass-modal">
+            <div class="modal-body text-center p-4">
+                <div class="modal-icon danger mb-3"><i class="bi bi-trash3"></i></div>
+                <h5 class="mb-2">Delete user?</h5>
+                <p class="text-muted small mb-4">
+                    You're about to delete <strong id="delTargetName">this user</strong>.
+                    This can't be undone.
+                </p>
+                <div class="d-flex justify-content-center gap-2">
+                    <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger-solid" id="btnConfirmDelete">
+                        <span class="btn-label"><i class="bi bi-trash3 me-1"></i>Delete</span>
+                        <span class="btn-spinner d-none">
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ TOASTS ============ -->
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index: 1090; margin-top: 60px;"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
