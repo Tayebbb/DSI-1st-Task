@@ -185,17 +185,21 @@ kbd {
 /* ============ SEARCH ============ */
 .search-wrap { position: relative; }
 .search-icon {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
     color: var(--text-subtle); pointer-events: none; font-size: 0.95rem;
+    z-index: 2;
 }
 .search-input {
-    padding-left: 2.4rem;
+    -webkit-appearance: none;
+    appearance: none;
+    padding-left: 2.75rem !important;
     background: rgba(255, 255, 255, 0.7);
     border-radius: 980px;
     border: 1px solid var(--border-strong);
     padding-top: 0.55rem;
     padding-bottom: 0.55rem;
     font-size: 0.95rem;
+    text-indent: 0;
 }
 .search-input:focus {
     box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
@@ -203,6 +207,7 @@ kbd {
     background: #fff;
 }
 .search-input::-webkit-search-cancel-button { -webkit-appearance: none; }
+.search-input::-webkit-search-decoration    { -webkit-appearance: none; }
 
 /* ============ USER CARDS ============ */
 .user-card {
