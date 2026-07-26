@@ -2,6 +2,18 @@
 
 A full-stack CRUD web application built with **Java 21** and **Spring Boot**, featuring a modern single-page glass-morphic UI, PostgreSQL persistence and a clean layered MVC architecture.
 
+<p align="center">
+    <img src="screenshots/helloworld.png" alt="Hello World endpoint" width="90%"><br>
+    <em>GET /hello endpoint</em>
+</p>
+
+<p align="center">
+    <img src="screenshots/DB1.png" alt="PostgreSQL database view" width="45%">
+    &nbsp;
+    <img src="screenshots/DB2.png" alt="PostgreSQL query results" width="45%"><br>
+    <em>PostgreSQL — schema &amp; data</em>
+</p>
+
 ---
 
 ## 📖 Overview
