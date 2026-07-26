@@ -201,8 +201,8 @@ This project demonstrates hands-on understanding of:
 
 ## 👤 Author
 
-- **Name:** _Your Name_
-- **University:** _Your University_
+- **Name:** Mohammed Tayeb
+- **University:** Ahsanullah University of Science and Technology
 - **Program:** Industry Attachment Project
 
 ---
