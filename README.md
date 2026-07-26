@@ -191,20 +191,6 @@ Validation and integrity errors return structured JSON:
 
 ---
 
-## 📸 Screenshots
-
-### Hello World Endpoint
-
-![Hello World](screenshots/helloworld.png)
-
-### PostgreSQL Database
-
-![Database View 1](screenshots/DB1.png)
-
-![Database View 2](screenshots/DB2.png)
-
----
-
 ## 🎓 Learning Outcomes
 
 This project demonstrates hands-on understanding of:
