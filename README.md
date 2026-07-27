@@ -1,6 +1,6 @@
 # Intern Demo — Spring Boot User Management
 
-A full-stack CRUD web application built with **Java 21** and **Spring Boot**, featuring a modern single-page glass-morphic UI, PostgreSQL persistence and a clean layered MVC architecture.
+A full-stack CRUD web application built with **Java 21** and **Spring Boot**, featuring a modern glass-morphic UI that is **server-side rendered with Thymeleaf** and progressively enhanced into a single-page experience, backed by PostgreSQL persistence and a clean layered MVC architecture.
 
 <p align="center">
     <img src="screenshots/helloworld.png" alt="Hello World endpoint" width="90%"><br>
@@ -23,21 +23,23 @@ This project was developed as part of my **Industry Attachment** program to gain
 - MVC architecture with clear separation between Controller, Service and Repository layers
 - Object-relational mapping with **JPA** and **Hibernate**
 - Integration with a real **PostgreSQL** database
-- A modern single-page dashboard powered by a REST API and vanilla JavaScript
+- Server-side HTML rendering with **Thymeleaf** (`th:each`, `th:text`, `th:style`, …), progressively enhanced by a REST API and vanilla JavaScript
 - Full **CRUD** (Create, Read, Update, Delete) operations with server-side validation
 
 The end result is a small but complete internship-quality application demonstrating the entire request lifecycle — from an HTTP request hitting the embedded Tomcat server, through the dispatcher, into a controller, service and repository, and back out to the browser.
 
 ### Architecture note
 
-The application was initially scaffolded as a multi-page **Thymeleaf** CRUD, then refactored into a **Single-Page Application** backed by a JSON REST API for a more modern user experience. Thymeleaf still ships the SPA shell (`templates/index.html`); the JSON endpoints under `/api/users` handle all CRUD operations.
+The home page (`GET /`) is rendered **server-side by Thymeleaf**: `HomeController` loads the users from the database and the template (`templates/index.html`) renders the user grid, total count and empty state directly in HTML using `th:each`, `th:text` and related attributes. The rendered list is then handed to the client (`window.__INITIAL_USERS__`) so the vanilla-JS front end can **hydrate** it into a single-page experience — search, create, edit and delete all happen without a full page reload against the JSON REST API under `/api/users`.
+
+This gives the best of both worlds: a fully rendered, no-JavaScript-required first paint from Thymeleaf, plus a responsive SPA feel once the page is interactive.
 
 ---
 
 ## ✨ Features
 
 - `GET /hello` — plain Hello World endpoint
-- Single-page user management dashboard
+- Server-side rendered (Thymeleaf) user dashboard that hydrates into a single-page app
 - **Create** new users
 - **View** all users
 - **Update** existing users
@@ -62,7 +64,7 @@ The application was initially scaffolded as a multi-page **Thymeleaf** CRUD, the
 | Hibernate       | JPA implementation (ORM)                   |
 | PostgreSQL      | Relational database                        |
 | HikariCP        | High-performance JDBC connection pool      |
-| Thymeleaf       | Server-side HTML template engine           |
+| Thymeleaf       | Server-side HTML rendering of the dashboard |
 | Bootstrap 5     | Responsive CSS framework                   |
 | Bootstrap Icons | Icon library                               |
 | Bean Validation | Declarative field validation               |
@@ -83,7 +85,7 @@ src/
 │   │       ├── entity/              # JPA-mapped domain classes
 │   │       └── InternappApplication.java   # Spring Boot entry point
 │   └── resources/
-│       ├── templates/               # Thymeleaf HTML (SPA shell)
+│       ├── templates/               # Thymeleaf HTML (server-rendered dashboard)
 │       ├── static/
 │       │   ├── css/                 # Stylesheets
 │       │   └── js/                  # Client-side scripts
@@ -174,7 +176,7 @@ The single entity `User` maps to the `users` table with the following columns:
 | Method | Endpoint          | Description               | Success |
 | ------ | ----------------- | ------------------------- | ------- |
 | GET    | `/hello`          | Plain-text Hello World    | `200`   |
-| GET    | `/`               | Serves the SPA dashboard  | `200`   |
+| GET    | `/`               | Thymeleaf-rendered dashboard | `200`   |
 | GET    | `/api/users`      | List all users            | `200`   |
 | GET    | `/api/users/{id}` | Get a user by id          | `200`   |
 | POST   | `/api/users`      | Create a user (JSON body) | `201`   |
