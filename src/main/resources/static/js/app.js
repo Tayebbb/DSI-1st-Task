@@ -291,5 +291,12 @@
     });
 
     // ---------- Boot ----------
-    loadUsers();
+    // Hydrate from the server-rendered (Thymeleaf) user list if present,
+    // otherwise fall back to fetching from the API.
+    if (Array.isArray(window.__INITIAL_USERS__)) {
+        users = window.__INITIAL_USERS__;
+        render();
+    } else {
+        loadUsers();
+    }
 })();
